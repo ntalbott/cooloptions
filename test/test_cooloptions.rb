@@ -20,10 +20,10 @@ class TestCoolOptions < Test::Unit::TestCase
 
   def test_should_handle_booleans
     r = parse!(%w(-a --no-b --c)) do |o|
-      o.on :a, '[no-]a', 'a', false
-      o.on :b, '[no-]b', 'b', true
-      o.on :c, '[no-]c', 'c', false
-      o.on :d, '[no-]d', 'd', true
+      o.on 'a', 'a', false
+      o.on 'b', 'b', true
+      o.on 'c', 'c', false
+      o.on 'd', 'd', true
     end
     
     assert r.a
@@ -34,8 +34,8 @@ class TestCoolOptions < Test::Unit::TestCase
   
   def test_should_handle_strings
     r = parse!(%w(-a b --c=d)) do |o|
-      o.on :a, 'a ARG', 'a'
-      o.on :c, 'c ARG', 'c'
+      o.on 'a ARG', 'a'
+      o.on 'c ARG', 'c'
     end
     
     assert_equal 'b', r.a
@@ -44,7 +44,7 @@ class TestCoolOptions < Test::Unit::TestCase
   
   def test_should_ignore_non_options
     r = CoolOptions.parse!('', argv=%w(ab -c de)) do |o|
-      o.on :c, '[no-]c', 'c'
+      o.on 'c', 'c'
     end
     
     assert r.c
@@ -54,7 +54,7 @@ class TestCoolOptions < Test::Unit::TestCase
   def test_should_call_after
     called = false
     r = parse!(%w(-a)) do |o|
-      o.on :a, '[no-]a', 'a'
+      o.on 'a', 'a'
       o.after{|r| assert r.a; called=true}
     end
     assert called
@@ -71,7 +71,7 @@ class TestCoolOptions < Test::Unit::TestCase
   def test_should_output_help
     begin
       r = CoolOptions.parse!('details', %w(--help)) do |o|
-        o.on :a, '[no-]a', 'aa'
+        o.on 'a', 'aa'
       end
     rescue SystemExit
       rescued = true
@@ -88,17 +88,39 @@ EOH
   def test_should_require_options_with_no_default
     assert_raise(SystemExit) do
       CoolOptions.parse!([]) do |o|
-        o.on :a, 'a A', 'a'
+        o.on 'a A', 'a'
+      end
+    end
+    assert_nothing_raised do
+      CoolOptions.parse!([]) do |o|
+        o.on 'a A', 'a', nil
       end
     end
   end
   
   def test_should_allow_specification_of_alternate_short_form
-    r = parse!(%w(-a -b c)) do |o|
-      o.on :a, '[no-]a', 'a', false
-      o.on :b, 'aa VALUE', 'b', nil, 'b'
+    r = parse!(%w(-a -b c -c d)) do |o|
+      o.on 'a', 'a', false
+      o.on 'b)aa VALUE', 'aa'
+      o.on 'b(c) VALUE', 'bc'
     end
     assert_equal true, r.a
-    assert_equal 'c', r.b
+    assert_equal 'c', r.aa
+    assert_equal 'd', r.bc
+  end
+  
+  def test_should_replace_dashes
+    r = parse!(%w(--a-b c)) do |o|
+      o.on 'a-b A', 'a'
+    end
+    assert_equal 'c', r.a_b
+  end
+  
+  def test_should_provide_access_to_the_parser
+    called = false
+    r = parse!(%w(-d)) do |o|
+      o.parser.on('-d'){called = true}
+    end
+    assert called
   end
 end

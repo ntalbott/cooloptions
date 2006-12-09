@@ -1,19 +1,30 @@
-# Copyright (c) 2006 Nathaniel Talbott and Terralien, Inc. All Rights Reserved.
-# Licensed under the RUBY license.
+# Copyright:: Copyright (c) 2006 Nathaniel Talbott and Terralien, Inc. All Rights Reserved.
+# License:: Licensed under the RUBY license.
 
 require 'optparse'
 require 'ostruct'
 
+# For a high-level overview of using CoolOptions, see README.txt.
+#
+# == Usage
+#
+#   :include:samples/literate.rb
+
 class CoolOptions
-  VERSION = '0.2.0'
+  VERSION = '1.0.0' #:nodoc:
 
   class Error < StandardError #:nodoc:
   end
 
-  def self.parse!(*args)
-    o = new
+  # Takes an optional banner and the arguments you want to parse (defaults to
+  # ARGV) and yields a new CoolOptions to the supplied block. You can then
+  # declare your options in the block using the #on method, and do post-
+  # processing using #after. When processing is done, an OpenStruct
+  # containing the parsed options is returned.
+  def self.parse!(banner="[options]", argv=ARGV) #:yields: cooloptions
+    o = new(banner)
     yield o
-    o.parse!(*args)
+    o.parse!(argv)
   rescue Error => e
     out.puts e.message
     o.help true
@@ -31,59 +42,75 @@ class CoolOptions
     @out = out
   end
   
-  def initialize
-    @options = []
+  attr_reader :parser, :result
+  
+  def initialize(banner) #:nodoc:
+    @parser = OptionParser.new
+    @parser.banner = "Usage: #{File.basename($0)} #{banner}"
+
+    @required = []
+    @result = {}
     @after = nil
   end
   
-  def on(key, long, message, default=nil, short=nil)
-    unless short
-      short = if /^\[/ =~ long
-        long.split(/\]/).last
-      else
-        long
-      end[0,1]
+  NO_DEFAULT = Object.new #:nodoc:
+  
+  # Called on cooloptions within the #parse! block to add options to parse on.
+  # Long is the long option itself, description is, well, the description, and
+  # default is the default value for the option, if any.
+  def on(long, description, default=NO_DEFAULT)
+    if /^(.)\)(.+)$/ =~ long
+      short, long = $1, $2
+    elsif /^(.*)\((.)\)(.*)$/ =~ long
+      short = $2
+      long = $1 + $2 + $3
     end
-    @options << [key, short, long, message, default]
-  end
-  
-  def parse!(banner="[options]", argv=ARGV)
-    result = {}
-    required = []
-    OptionParser.new do |o|
-      @o = o
-      o.banner = "Usage: #{File.basename($0)} #{banner}"
+    short = long[0,1] unless short
 
-      @options.each do |(key, short, long, message, default)|
-        args = ["-#{short}", "--#{long}", message]
-        if default.nil?
-          required << key
-        else
-          result[key] = default
-          args << "Default is: #{default}"
-        end
-        o.on(*args){|e| result[key] = e}
-      end
-      
-      o.on('-h', '--help', "This help info."){help}
-    end.parse!(argv)
-    required.reject!{|e| result.key?(e)}
-    error "Missing required options: #{required.join(', ')}" unless required.empty?
-    result = OpenStruct.new(result)
-    @after.call(result) if @after
-    result
+    key = long.split(/ /).first.gsub('-', '_').to_sym
+
+    unless long =~ / /
+      long = "[no-]#{long}"
+    end
+
+    args = ["-#{short}", "--#{long}", description]
+    if default == NO_DEFAULT
+      @required << key
+    else
+      @result[key] = default
+      args << "Default is: #{default}"
+    end
+
+    @parser.on(*args){|e| self.result[key] = e}
   end
   
+  def parse!(argv) #:nodoc:
+    @parser.on('-h', '--help', "This help info."){help}
+    @parser.parse!(argv)
+
+    @required.reject!{|e| @result.key?(e)}
+    error "Missing required options: #{@required.join(', ')}" unless @required.empty?
+
+    r = OpenStruct.new(@result)
+    @after.call(r) if @after
+    r
+  end
+  
+  # If you want to throw an option parsing error, just call #error with a
+  # message and CoolOptions will bail out and display the help message.
   def error(message)
     raise Error, message, caller
   end
   
+  # CoolOptions only handles options parsing, and it only does rudimentary
+  # option validation. If you want to do more, #after is a convenient place do
+  # it, especially since the right thing will just happen if you call #error.
   def after(&after)
     @after = after
   end
   
-  def help(error=false)
-    out.puts @o
+  def help(error=false) #:nodoc:
+    out.puts @parser
     exit(error ? 1 : 0)
   end
 end

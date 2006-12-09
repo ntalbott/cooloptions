@@ -1,7 +1,8 @@
-== 0.2.0 / 
+== 1.0.0 / 
 
 * Added test for short options specification.
-* Improved documentation.
+* Improved the documentation.
+* Re-vamped option specification completely.
 
 == 0.1.0 / 2006-11-30
 
