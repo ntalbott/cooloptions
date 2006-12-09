@@ -67,14 +67,19 @@ CoolOptions is a simple wrapper around optparse that provides less options and m
 
 optparse & ostruct (included in Ruby standard library).
 
+== DOWNLOAD:
+
+Via gems or from the
+{Rubyforge project page}[http://rubyforge.org/projects/cooloptions].
+
 == INSTALL:
 
   sudo gem install cooloptions
 
 == CONTRIBUTE:
 
-Drop me an email (see above) and/or check out the source at
-http://terralien.com/svn/projects/cooloptions/trunk.
+Drop me an email (see above) and/or
+{check out the source}[http://terralien.com/svn/projects/cooloptions/trunk].
 
 == LICENSE:
 

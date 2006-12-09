@@ -1,5 +1,5 @@
 # Copyright:: Copyright (c) 2006 Nathaniel Talbott and Terralien, Inc. All Rights Reserved.
-# License:: Licensed under the RUBY license.
+# License:: The RUBY license.
 
 require 'optparse'
 require 'ostruct'
@@ -11,7 +11,7 @@ require 'ostruct'
 #   :include:samples/literate.rb
 
 class CoolOptions
-  VERSION = '1.0.1' #:nodoc:
+  VERSION = '1.0.2' #:nodoc:
 
   class Error < StandardError #:nodoc:
   end
