@@ -8,6 +8,8 @@ CoolOptions is a simple wrapper around optparse that provides less options and m
 
 == SYNOPSYS:
 
+=== Declaration:
+
   options = CoolOptions.parse!("[options] PROJECTNAME") do |o|
     o.on :svk,              "[no-]svk",              "Use svk.",                              true
     o.on :project_path,     "project-path PATH",     "Root of project workspaces.",           File.expand_path("~/svk")
@@ -24,6 +26,40 @@ CoolOptions is a simple wrapper around optparse that provides less options and m
       r.project_name = ARGV.shift
     end
   end
+  
+=== Usage:
+
+  $ ./new_rails_project --no-svk -r http://terralien.com/svn/terralien/ --no-finish
+  
+=== Result:
+  
+  p options.svk                 # => false
+  p options.project_path        # => '/Users/ntalbott/svk'
+  p options.repository          # => 'http://terralien.com/svn/terralien/'
+  p options.finish              # => false
+  p options.create_structure    # => true
+  p options.project_name        # => 'myproject'
+
+=== Also:
+
+  $ ./new_rails_project --help                                                               
+  Usage: t.rb [options] PROJECTNAME
+      -s, --[no-]svk                   Use svk.
+                                       Default is: true
+      -p, --project-path PATH          Root of project workspaces.
+                                       Default is: /Users/ntalbott/svk
+      -r, --repository URL             Remote subversion repository.
+      -l, --repository-path PATH       Remote repository path.
+                                       Default is: /
+      -m, --mirror-path SVKPATH        SVK mirror path.
+                                       Default is: //
+      -t, --local-path SVKPATH         SVK local path.
+                                       Default is: //local
+      -c, --[no-]create-structure      Create trunk/tags/branches structure.
+                                       Default is: true
+      -f, --[no-]finish                Prep and commit the new project.
+                                       Default is: true
+      -h, --help                       This help info.
 
 == REQUIREMENTS:
 

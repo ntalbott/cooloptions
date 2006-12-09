@@ -92,4 +92,13 @@ EOH
       end
     end
   end
+  
+  def test_should_allow_specification_of_alternate_short_form
+    r = parse!(%w(-a -b c)) do |o|
+      o.on :a, '[no-]a', 'a', false
+      o.on :b, 'aa VALUE', 'b', nil, 'b'
+    end
+    assert_equal true, r.a
+    assert_equal 'c', r.b
+  end
 end
