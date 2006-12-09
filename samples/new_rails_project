@@ -22,6 +22,5 @@ end
 p options.svk                 # => false
 p options.project_path        # => '/Users/ntalbott/svk'
 p options.repository          # => 'http://terralien.com/svn/terralien/'
-p options.finish              # => false
 p options.create_structure    # => true
 p options.project_name        # => 'myproject'

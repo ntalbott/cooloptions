@@ -6,7 +6,9 @@
   
 CoolOptions is a simple wrapper around optparse that provides less options and more convenience.
 
-== SYNOPSYS:
+As a huge fan of optparse due to its flexibility, self-documenting nature, and ease of use, I nevertheless found myself doing almost the exact same thing with it over and over again, and decided to write a thin wrapper around it to handle the common cases. Thus CoolOptions was born.
+
+== SYNOPSIS:
 
 === Declaration:
 
@@ -31,14 +33,13 @@ CoolOptions is a simple wrapper around optparse that provides less options and m
   
 === Usage:
 
-  $ ./new_rails_project --no-svk -r http://terralien.com/svn/terralien/ --no-finish
+  $ ./new_rails_project --no-svk -r http://terralien.com/svn/terralien/ myproject
   
 === Result:
   
   p options.svk                 # => false
   p options.project_path        # => '/Users/ntalbott/svk'
   p options.repository          # => 'http://terralien.com/svn/terralien/'
-  p options.finish              # => false
   p options.create_structure    # => true
   p options.project_name        # => 'myproject'
 
