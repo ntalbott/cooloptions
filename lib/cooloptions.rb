@@ -11,7 +11,7 @@ require 'ostruct'
 #   :include:samples/literate.rb
 
 class CoolOptions
-  VERSION = '1.0.0' #:nodoc:
+  VERSION = '1.0.1' #:nodoc:
 
   class Error < StandardError #:nodoc:
   end

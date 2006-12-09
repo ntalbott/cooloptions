@@ -1,4 +1,9 @@
-== 1.0.0 / 
+== 1.0.1 / 2006-12-09
+
+* Added samples
+* Added contribution info to README.txt.
+
+== 1.0.0 / 2006-12-09
 
 * Added test for short options specification.
 * Improved the documentation.

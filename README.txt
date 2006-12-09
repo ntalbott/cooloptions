@@ -71,6 +71,11 @@ optparse & ostruct (included in Ruby standard library).
 
   sudo gem install cooloptions
 
+== CONTRIBUTE:
+
+Drop me an email (see above) and/or check out the source at
+http://terralien.com/svn/projects/cooloptions/trunk.
+
 == LICENSE:
 
 The RUBY License
