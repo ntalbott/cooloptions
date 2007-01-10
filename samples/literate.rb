@@ -1,6 +1,7 @@
 require 'cooloptions'
 
 options = CoolOptions.parse!('[options] NAME') do |cooloptions|
+  cooloptions.desc 'This is a literate sample of what CoolOptions can do.'  # Adds some extra descriptive text.
   cooloptions.on 'option STRING',  'Description', 'default' # Matches '-o string' or '--option string' or uses the 'default'.
 
   cooloptions.on 'required VALUE', 'Required'               # Because there's no default, the option is required.

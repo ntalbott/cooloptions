@@ -13,6 +13,7 @@ As a huge fan of optparse due to its flexibility, self-documenting nature, and e
 === Declaration:
 
   options = CoolOptions.parse!("[options] PROJECTNAME") do |o|
+    o.desc 'Sets up a new Rails project.'
     o.on "repository URL",         "Remote subversion repository."          
     o.on "svk",                    "Use svk.",                              true
     o.on "project-path PATH",      "Root of project workspaces.",           File.expand_path("~/svk")

@@ -11,7 +11,7 @@ require 'ostruct'
 #   :include:samples/literate.rb
 
 class CoolOptions
-  VERSION = '1.0.4' #:nodoc:
+  VERSION = '1.1.0' #:nodoc:
 
   class Error < StandardError #:nodoc:
   end
@@ -51,6 +51,14 @@ class CoolOptions
     @required = []
     @result = {}
     @after = nil
+    @used_shorts = {}
+  end
+  
+  # Adds additional descriptive text to the help text.
+  def desc(string)
+    string.each_line do |s|
+      @parser.separator s.chomp
+    end
   end
   
   NO_DEFAULT = Object.new #:nodoc:
@@ -73,7 +81,10 @@ class CoolOptions
       long = "[no-]#{long}"
     end
 
-    args = ["-#{short}", "--#{long}", description]
+    args = []
+    args << "-#{short}" unless @used_shorts[short]
+    @used_shorts[short] = true
+    args.concat(["--#{long}", description])
     if default == NO_DEFAULT
       @required << key
     else

@@ -1,3 +1,13 @@
+== 1.1.0 / 2007-01-10
+
+* Incremented the version number to more rationally reflect the addition of
+  CoolOptions#desc in 1.0.5.
+* Fixed handling of overlapping automatic short options.
+
+== 1.0.5 / 2006-12-09
+
+* Added CoolOptions#desc (suggested by John Long).
+
 == 1.0.4 / 2006-12-09
 
 * Added a Rake dependency.

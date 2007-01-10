@@ -71,6 +71,10 @@ class TestCoolOptions < Test::Unit::TestCase
   def test_should_output_help
     begin
       r = CoolOptions.parse!('details', %w(--help)) do |o|
+        o.desc <<EOD.chomp
+This is a sweet little non-existent command.
+Really!
+EOD
         o.on 'a', 'aa'
       end
     rescue SystemExit
@@ -80,6 +84,8 @@ class TestCoolOptions < Test::Unit::TestCase
     assert rescued
     assert_equal <<EOH, @out.string
 Usage: #{File.basename($0)} details
+This is a sweet little non-existent command.
+Really!
     -a, --[no-]a                     aa
     -h, --help                       This help info.
 EOH
@@ -122,5 +128,33 @@ EOH
       o.parser.on('-d'){called = true}
     end
     assert called
+  end
+  
+  def test_should_not_assign_already_used_short_options
+    begin
+      CoolOptions.parse!('details', %w(--help)) do |o|
+        o.on 'cl C', 'cl'
+        o.on 'ca', 'ca'
+      end
+    rescue SystemExit
+      rescued = true
+    end
+
+    assert rescued
+    assert_equal <<EOH, @out.string
+Usage: #{File.basename($0)} details
+    -c, --cl C                       cl
+        --[no-]ca                    ca
+    -h, --help                       This help info.
+EOH
+  end
+
+  def test_should_handle_overlapping_short_options
+    r = parse!(%w(-c d)) do |o|
+      o.on 'cl C', 'cl'
+      o.on 'ca', 'ca', false
+    end
+
+    assert 'd', r.cl
   end
 end
